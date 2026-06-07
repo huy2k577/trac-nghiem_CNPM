@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STU - Hệ Thống Luyện Thi Công Nghệ Phần Mềm</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --primary-light: #dbeafe;
+            --success: #10b981;
+            --success-light: #ecfdf5;
+            --danger: #ef4444;
+            --danger-light: #fef2f2;
+            --warning: #eab308;
+            --warning-light: #fef08a;
+            --warning-text: #854d0e;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --bg-body: #f3f4f6;
+            --bg-card: #ffffff;
+            --border: #e5e7eb;
+            --radius: 12px;
+            --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 60px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+            color: white;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 16px;
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .container { grid-template-columns: 1fr; }
+            .sidebar { order: -1; }
+        }
+
+        .main-content {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            min-height: 400px;
+            position: relative;
+        }
+
+        .sidebar {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            height: fit-content;
+            position: sticky;
+            top: 130px;
+        }
+
+        .progress-container {
+            margin-bottom: 16px;
+        }
+
+        .progress-bar-bg {
+            background: var(--border);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .progress-bar-fill {
+            background: var(--primary);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .grid-nav {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            max-height: 320px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .grid-item {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-body);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .grid-item.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--primary-light);
+        }
+
+        .grid-item.correct {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .grid-item.wrong {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+
+        .grid-item.skipped {
+            background: var(--warning);
+            color: var(--warning-text);
+            border-color: var(--warning);
+        }
+
+        .q-header {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 18px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-weight: 500;
+        }
+
+        .option-item:not(.disabled):hover {
+            background-color: var(--bg-body);
+            border-color: var(--text-muted);
+        }
+
+        .option-item.correct-instant {
+            border-color: var(--success) !important;
+            background-color: var(--success-light) !important;
+            color: #065f46 !important;
+        }
+
+        .option-item.wrong-instant {
+            border-color: var(--danger) !important;
+            background-color: var(--danger-light) !important;
+            color: #991b1b !important;
+        }
+
+        .option-item.disabled {
+            cursor: not-allowed;
+        }
+
+        .option-prefix {
+            font-weight: 700;
+            margin-right: 12px;
+            background: var(--bg-body);
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 0.9rem;
+        }
+
+        .option-item.correct-instant .option-prefix {
+            background: var(--success);
+            color: white;
+        }
+
+        .option-item.wrong-instant .option-prefix {
+            background: var(--danger);
+            color: white;
+        }
+
+        .actions {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .btn-secondary {
+            background: var(--bg-body);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        /* Modal Cơ Bản */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1; pointer-events: auto;
+        }
+
+        .modal-card {
+            background: white;
+            border-radius: var(--radius);
+            width: 90%;
+            max-width: 650px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .modal-header h2 {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .score-summary {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            background: var(--bg-body);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .score-num {
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        .table-wrapper {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        th {
+            background: var(--bg-body);
+            padding: 12px;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .badge-success { background: var(--success); }
+        .badge-danger { background: var(--danger); }
+        .badge-warning { background: var(--warning); color: var(--warning-text); }
+
+        .modal-footer {
+            padding: 15px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Thống nhất CSS cho Modal Nhắc nhở màu vàng */
+        .warning-banner {
+            background-color: var(--warning-light);
+            border-top: 6px solid var(--warning);
+            max-width: 420px !important;
+        }
+        .btn-warning-action {
+            background: var(--warning);
+            color: var(--warning-text);
+        }
+        .btn-warning-action:hover {
+            background: #d9a006;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>HỆ THỐNG LUYỆN THI CÔNG NGHỆ PHẦN MỀM</h1>
+        <p>Tính năng: Kiểm tra đáp án tức thì & Xáo trộn hoàn toàn đề thi (STU)</p>
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+            <div id="quiz-area">
+                </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="progress-container">
+                <div style="display: flex; justify-content: space-between; font-weight: 600;">
+                    <span>Tiến độ:</span>
+                    <span id="progress-text">0/56</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="progress-fill"></div>
+                </div>
+            </div>
+            <div class="grid-nav" id="question-grid">
+                </div>
+            <button class="btn btn-secondary" style="width: 100%; margin-top: 15px;" onclick="resetQuiz()">Làm lại từ đầu</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="warning-modal">
+        <div class="modal-card warning-banner">
+            <div class="modal-body" style="text-align: center; padding: 30px 20px;">
+                <div style="font-size: 3rem; margin-bottom: 10px;">⚠️</div>
+                <h3 style="font-size: 1.3rem; margin-bottom: 12px; color: var(--warning-text); font-weight: 700;">Chưa chọn đáp án!</h3>
+                <p style="color: #6b7280; margin-bottom: 24px; font-size: 0.95rem;">Bạn chưa thực hiện chọn đáp án cho câu hỏi này. Bạn muốn ở lại hoàn thành hay tiếp tục chuyển đi?</p>
+                <div style="display: flex; gap: 12px; justify-content: center;">
+                    <button class="btn btn-secondary" onclick="closeWarningModal()">Ở lại</button>
+                    <button class="btn btn-warning-action" onclick="confirmSkipQuestion()">Chuyển tiếp</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>KẾT QUẢ KIỂM TRA TỔNG HỢP</h2>
+            </div>
+            <div class="modal-body">
+                <div class="score-summary">
+                    <div>
+                        <div class="score-num" style="color: var(--success);" id="modal-correct-count">0</div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted);">Đúng</div>
+                    </div>
+                    <div>
+                        <div class="score-num" style="color: var(--danger);" id="modal-wrong-count">0</div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted);">Sai</div>
+                    </div>
+                    <div>
+                        <div class="score-num" style="color: var(--warning-text);" id="modal-skip-count">0</div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted);">Bỏ qua</div>
+                    </div>
+                    <div>
+                        <div class="score-num" style="color: var(--primary);" id="modal-ratio">0%</div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted);">Tỷ lệ đúng</div>
+                    </div>
+                </div>
+                
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="text-align: center; width: 90px;">Câu số</th>
+                                <th>Nội dung câu hỏi ôn tập</th>
+                                <th style="text-align: center; width: 110px;">Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody id="summary-table-body">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="resetQuiz(); closeResultModal();">Xáo trộn đề làm lại</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const rawQuizData = [
+            { q: "Thiết kế phần mềm là gì?", a: ["Quá trình viết mã nguồn", "Quá trình xác định các thành phần phần mêm và mối liên kết giữa chúng dựa trên yêu cầu của khách hàng", "Quá trình kiểm thử phần mềm", "Quá trình bảo trì phần mềm"], c: 1 },
+            { q: "Hiện thực phần mềm là gì?", a: ["Quá trình kiểm thử phần mềm", "Quá trình hiện thực hóa thiết kế thành chương trình", "Quá trình viết tài liệu hướng dẫn", "Quá trình bảo trì phần mềm"], c: 1 },
+            { q: "Thiết kế và hiện thực phần mềm là hai hoạt động như thế nào?", a: ["Tách biệt hoàn toàn", "Đan xen lẫn nhau", "Hoàn toàn độc lập", "Không liên quan đến nhau"], c: 1 },
+            { q: "Thiết kế hướng đối tượng sử dụng gì để biểu diễn?", a: ["UML", "SQL", "HTML", "XML"], c: 0 },
+            { q: "Thiết kế mẫu là gì?", a: ["Một phương pháp lập trình", "Một phương pháp thiết kế giao diện người dùng", "Một phương pháp để giải quyết các vấn đề thiết kế thường gặp", "Một phương pháp kiểm thử phần mềm"], c: 2 },
+            { q: "Phát triển mã nguồn mở liên quan đến gì?", a: ["Sử dụng phần mềm đóng gói", "Sử dụng và phát triển các thành phần mã nguồn mở", "Thiết kế giao diện người dùng", "Quản lý dự án phần mềm"], c: 1 },
+            { q: "Một trong những nguyên tắc chính trong thiết kế giao diện người dùng là gì?", a: ["Tối ưu hóa cho các thiết bị di động", "Tính đến nhu cầu, kinh nghiệm và khả năng của người dùng hệ thống", "Tăng tốc độ phát triển phần mềm", "Giảm chi phí phát triển"], c: 1 },
+            { q: "Thiết kế UI cần nhận thức được điều gì?", a: ["Các hạn chế về tài chính của dự án", "Các hạn chế về vật lý và tinh thần của người dùng", "Các công nghệ mới nhất", "Các yêu cầu chức năng của hệ thống"], c: 1 },
+            { q: "Các mô hình thiết kế hệ thống có vai trò gì trong dự án lớn?", a: ["Giảm thời gian phát triển", "Là cơ chế giao tiếp quan trọng giữa các nhóm thiết kế khác nhau", "Tăng chi phí dự án", "Giảm số lượng lỗi phần mềm"], c: 1 },
+            { q: "Thiết kế thuật toán là gì?", a: ["Quá trình thiết kế giao diện người dùng", "Quá trình thiết kế các thuật toán để giải quyết các vấn đề cụ thể", "Quá trình viết mã nguồn", "Quá trình kiểm thử phần mềm"], c: 1 },
+            { q: "Thiết kế cơ sở dữ liệu liên quan đến điều gì?", a: ["Thiết kế giao diện người dùng", "Thiết kế cấu trúc và tổ chức của cơ sở dữ liệu", "Thiết kế các thuật toán", "Kiểm thử cơ sở dữ liệu"], c: 1 },
+            { q: "Trong thiết kế giao diện người dùng, cần thừa nhận điều gì?", a: ["Người dùng luôn biết cách sử dụng hệ thống", "Ai cũng có thể nhầm lẫn", "Hệ thống không bao giờ gặp lỗi", "Giao diện không cần thân thiện"], c: 1 },
+            { q: "Mục đích chính của thiết kế giao diện người dùng là gì?", a: ["Tăng tốc độ phát triển phần mềm", "Đáp ứng nhu cầu và trải nghiệm người dùng", "Giảm chi phí phát triển", "Tăng tính bảo mật của hệ thống"], c: 1 },
+            { q: "Quá trình thiết kế phần mềm bao gồm gì?", a: ["Viết mã nguồn", "Định nghĩa các thành phần phần mềm và mối liên kết giữa chúng", "Kiểm thử phần mềm", "Bảo trì phần mềm"], c: 1 },
+            { q: "Một ví dụ về biểu đồ hoạt động trong thiết kế phần mềm là gì?", a: ["Biểu đồ lớp", "Biểu đồ liên kết", "Biểu đồ hoạt động swimming lane", "Biểu đồ thành phần"], c: 2 },
+            { q: "Quản lý bản quyền trong thiết kế phần mềm liên quan đến điều gì?", a: ["Sử dụng các thành phần mã nguồn mở mà không cần kiểm tra", "Duy trì thông tin về các thành phần mã nguồn mở đã tải về và sử dụng", "Thiết kế giao diện người dùng", "Bảo trì phần mềm"], c: 1 },
+            { q: "Một trong những nguyên tắc quan trọng thiết kế phần mềm là gì?", a: ["Giảm thiểu số lượng mã nguồn", "Đảm bảo phần mềm dễ dàng bảo trì và mở rộng", "Tăng số lượng thành phần phần mềm", "Giảm thiểu tài liệu hướng dẫn"], c: 1 },
+            { q: "Thiết kế cơ sở dữ liệu bao gồm việc gì?", a: ["Xác định cấu trúc dữ liệu và cách tổ chức dữ liệu trong cơ sở dữ liệu", "Viết mã nguồn", "Thiết kế giao diện người dùng", "Kiểm thử cơ sở dữ liệu"], c: 0 },
+            { q: "Thiết kế thuật toán có vai trò gì trong phần mềm?", a: ["Định nghĩa các giao diện người dùng", "Giải quyết các vấn đề cụ thể bằng cách xác định các bước xử lý", "Tăng tốc độ phát triển phần mềm", "Bảo trì phần mềm"], c: 1 },
+            { q: "Mục đích của việc hiện thực phần mềm là gì?", a: ["Đáp ứng các yêu cầu thiết kế chi tiết", "Thỏa mãn người dùng cuối", "Tăng tính phức tạp của mã nguồn", "Giảm chi phí phát triển"], c: 0 },
+            { q: "Unit Implementation được hiểu là gì?", a: ["Lập trình các đơn vị phần mềm nhỏ nhất", "Thiết kế giao diện người dùng", "Tạo lập các tài liệu hướng dẫn sử dụng", "Kiểm tra và bảo trì phần mềm"], c: 0 },
+            { q: "Một quy tắc vàng trong hiện thực phần mềm là gì?", a: ["Kiểm tra các yêu cầu và thiết kế lại một lần nữa", "Không cần kiểm tra lại thiết kế sau khi mã hóa", "Tập trung vào việc lập trình nhanh chóng", "Đơn giản hóa tất cả các quy trình"], c: 0 },
+            { q: "Tại sao cần xác nhận các thiết kế chi tiết trước khi hiện thực?", a: ["Để đảm bảo các thiết kế đáp ứng yêu cầu của người dùng", "Để giảm chi phí phát triển", "Để tiết kiệm thời gian kiểm thử", "Để tăng tốc độ mã hóa"], c: 0 },
+            { q: "Mục đích của việc ghi lại lỗi khi sử dụng form là gì?", a: ["Để theo dõi và sửa chữa lỗi một cách hệ thống", "Để lưu trữ dữ liệu người dùng", "Để tăng tốc độ phát triển phần mềm", "Để phân tích thị trường"], c: 0 },
+            { q: "Tiêu chuẩn yêu cầu đối với việc mã hóa bao gồm gì?", a: ["Tính đúng đắn và rõ ràng", "Tính linh hoạt và tiết kiệm", "Tính đơn giản và nhanh chóng", "Tính bảo mật và khả năng mở rộng"], c: 0 },
+            { q: "Ước lượng kích thước và thời gian dựa trên gì?", a: ["Dữ liệu đã có", "Kinh nghiệm cá nhân", "Yêu cầu khách hàng", "Ngân sách dự án"], c: 0 },
+            { q: "Hiện thực mã chương trình bao gồm bước nào sau đây?", a: ["Lập kế hoạch cấu trúc và thiết kế mã", "Thiết kế giao diện người dùng", "Viết tài liệu hướng dẫn", "Tạo lập báo cáo phân tích"], c: 0 },
+            { q: "Tại sao cần tự kiểm tra lại thiết kế/cấu trúc trước khi mã hóa?", a: ["Để đảm bảo tính đúng đắn và hiệu quả của mã nguồn", "Để tăng tốc độ mã hóa", "Để giảm chi phí phát triển", "Để làm hài lòng khách hàng"], c: 0 },
+            { q: "Quy tắc đặt tên trong hiện thực mã chương trình cần tuân thủ những gì?", a: ["Phù hợp và rõ ràng", "Ngắn gọn và xúc tích", "Phức tạp và chi tiết", "Bất kỳ tên nào cũng được"], c: 0 },
+            { q: "Kiểm tra Class cần xem xét điều gì?", a: ["Tên Class có thích hợp không", "Class có được trừu tượng không", "Header của Class có mô tả mục đích của hàm hay không", "Tất cả các ý trên"], c: 3 },
+            { q: "Kiểm tra thuộc tính cần xác định điều gì?", a: ["Thuộc tính có cần thiết không", "Thuộc tính có thể là static không", "Thuộc tính có nên là final không", "Tất cả các ý trên"], c: 3 },
+            { q: "Phương pháp kiểm tra phương thức khởi dựng cần xác định điều gì?", a: ["Phương pháp có cần thiết không", "Phương thức có leverage các constructor hiện có không", "Phương thức có initialize tất cả các thuộc tính không", "Tất cả các ý trên"], c: 3 },
+            { q: "Làm thế nào để lập trình 1000 LoC/ngày?", a: ["Lập kế hoạch cấu trúc và thiết kế mã chương trình", "Tăng tốc độ đánh máy", "Tập trung vào các yêu cầu của khách hàng", "Giảm thời gian kiểm tra mã"], c: 0 },
+            { q: "Kiểm tra thuộc tính có cần xác định điều gì?", a: ["Sự cần thiết của thuộc tính", "Thuộc tính có thể là static hay không", "Thuộc tính có nên là final hay không", "Tất cả các ý trên"], c: 3 },
+            { q: "Tại sao cần ghi chú lại các mốc thời gian trong quá trình hiện thực mã chương trình?", a: ["Để theo dõi tiến độ và quản lý thời gian hiệu quả", "Để lưu trữ dữ liệu người dùng", "Để phân tích thị trường", "Để giảm chi phí phát triển"], c: 0 },
+            { q: "Việc chuẩn bị để hiện thực bao gồm gì?", a: ["Xác định các thiết kế chi tiết phải hiện thực", "Mã hóa từ một thiết kế được mô tả bằng văn bản", "Đo thời gian phân loại theo các bước", "Tất cả các ý trên"], c: 3 },
+            { q: "Mục đích của việc biên dịch mã lệnh là gì?", a: ["Kiểm tra và sửa chữa các lỗi cú pháp", "Thiết kế giao diện người dùng", "Viết tài liệu hướng dẫn", "Tạo lập báo cáo phân tích"], c: 0 },
+            { q: "Mục tiêu của kiểm thử phần mềm là gì?", a: ["Để chỉ ra rằng chương trình thực thiện đúng như mong đợi và tìm ra lỗi", "Để giảm chi phí phát triển", "Để tăng tốc độ lập trình", "Để làm hài lòng khách hàng"], c: 0 },
+            { q: "Kiểm thử đơn vị (unit testing) tập trung vào điều gì?", a: ["Kiểm thử chức năng của các đối tượng hay các phương thức", "Kiểm thử giao diện người dùng", "Kiểm thử hiệu suất hệ thống", "Kiểm thử tính bảo mật"], c: 0 },
+            { q: "Kiểm thử component (component testing) tập trung vào điều gì?", a: ["Kiểm thử giao diện component", "Kiểm thử chức năng của các phương thức", "Kiểm thử tính bảo mật", "Kiểm thử giao diện người dùng"], c: 0 },
+            { q: "Kiểm thử hệ thống (system testing) tập trung vào điều gì?", a: ["Kiểm thử tương tác giữa các component", "Kiểm thử giao diện người dùng", "Kiểm thử tính bảo mật", "Kiểm thử hiệu suất hệ thống"], c: 0 },
+            { q: "Kiểm thử tự động nên sử dụng gì để hỗ trợ kiểm thử đơn vị?", a: ["Framwork kiểm thử tự động (như JUnit)", "Các công cụ kiểm thử thủ công", "Phần mềm thiết kế giao diện", "Các chương trình bảo mật"], c: 0 },
+            { q: "Mục tiêu của kiểm thử giao diện là gì?", a: ["Tìm ra lỗi gây ra bởi các lỗi giao diện hoặc giả định sai về các giao diện", "Kiểm thử chức năng của các phương thức", "Kiểm thử hiệu suất hệ thống", "Kiểm thử tính bảo mật"], c: 0 },
+            { q: "Một loại giao diện trong kiểm thử giao diện là gì?", a: ["Giao diện có tham số", "Giao diện người dùng", "Giao diện hệ thống", "Giao diện bảo mật"], c: 0 },
+            { q: "Kiểm thử phát triển là trách nhiệm của ai?", a: ["Đội ngũ phát triển phần mềm", "Người dùng cuối", "Nhóm marketing", "Nhóm hỗ trợ khách hàng"], c: 0 },
+            { q: "Kiểm thử phát hành là gì?", a: ["Kiểm thử hệ thống trước khi phát hành cho khách hàng", "Kiểm thử hệ thống sau khi phát hành cho khách hàng", "Kiểm thử hệ thống trong giai đoạn phát triển", "Kiểm thử hệ thống trong giai đoạn bảo trì"], c: 0 },
+            { q: "Phương pháp kiểm thử hộp đen tập trung vào điều gì?", a: ["Kiểm thử chức năng của hệ thống mà không cần biết cấu trúc bên trong", "Kiểm thử hiệu xuất bên trong", "Kiểm thử tính bảo mật", "Kiểm thử giao diện người dùng"], c: 0 },
+            { q: "Phương pháp kiểm thử hộp trắng tập trung vào điều gì?", a: ["Kiểm thử cấu trúc bên trong của hệ thống", "Kiểm thử hiệu xuất hệ thống", "Kiểm thử tính bảo mật", "Kiểm thử giao diện người dùng"], c: 0 },
+            { q: "Phương pháp kiểm thử hộp xám là gì?", a: ["Kết hợp giữa kiểm thử hộp đen và kiểm thử hộp trắng", "Kiểm thử hiệu xuất hệ thống", "Kiểm thử tính bảo mật", "Kiểm thử giao diện người dùng"], c: 0 },
+            { q: "Mục tiêu của kiểm thử validation là gì?", a: ["Để chỉ ra rằng phần mềm thỏa mãn các yêu cầu đưa ra", "Để tìm ra các lỗi của phần mềm", "Để giảm chi phí phát triển", "Để tăng tốc độ lập trình"], c: 0 },
+            { q: "Mục tiêu của kiểm thử defect là gì?", a: ["Để tìm ra các tình huống mà phần mềm không hoạt động đúng như mong đợi", "Để chỉ ra rằng phần mềm thỏa mãn các yêu cầu đưa ra", "Để giảm chi phí phát triển", "Để làm hài lòng khách hàng"], c: 0 },
+            { q: "Tại sao cần kiểm tra kết quả của việc kiểm thử?", a: ["Để tìm ra lỗi và các bất thường", "Để lưu trữ dữ liệu người dùng", "Để phân tích thị trường", "Để tăng tốc độ phát triển phần mềm"], c: 0 },
+            { q: "Kiểm thử người dùng tập trung vào điều gì?", a: ["Kiểm thử phần mềm bởi người dùng cuối", "Kiểm thử tính bảo mật", "Kiểm thử hiệu suất hệ thống", "Kiểm thử giao diện người dùng"], c: 0 },
+            { q: "Cải tiến quy trình phần mềm bao gồm gì?", a: ["Cải tiến các phương pháp phát triền và kiểm thử phần mềm", "Tăng tốc độ lập trình", "Giảm chi phí phát triển", "Tập trung vào giao diện người dùng"], c: 0 },
+            { q: "Bảo trì phần mềm bao gồm gì?", a: ["Sửa lỗi và nâng cấp phần mềm sau khi phát hành", "Thiết kế giao diện người dùng", "Viết tài liệu hướng dẫn", "Tạo lập báo cáo phân tích"], c: 0 },
+            { q: "Mục đích của việc kiểm thử bản release là gì?", a: ["Để đảm bảo phần mềm hoạt động đúng như mong đợi trước khi phát hành", "Để giảm chi phí phát triển", "Để tăng tốc độ lập trình", "Để làm hài lòng khách hàng"], c: 0 }
+        ];
+
+        let processedQuiz = [];
+        let currentIndex = 0;
+        let pendingTargetIndex = null; // Biến tạm lưu câu muốn tới khi bị chặn cảnh báo
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function prepareQuizData() {
+            processedQuiz = rawQuizData.map((item, originIdx) => {
+                let formattedOptions = item.a.map((optionText, optIdx) => {
+                    return { text: optionText, isCorrect: optIdx === item.c };
+                });
+                shuffleArray(formattedOptions);
+
+                return {
+                    originalId: originIdx + 1,
+                    questionText: item.q,
+                    options: formattedOptions,
+                    userSelectedIndex: null,
+                    isUserCorrect: null,
+                    isSkipped: false // Trạng thái người dùng cố tình bỏ qua (Màu vàng)
+                };
+            });
+            shuffleArray(processedQuiz);
+        }
+
+        function initQuiz() {
+            prepareQuizData();
+            currentIndex = 0;
+            renderGrid();
+            renderQuestion();
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('question-grid');
+            grid.innerHTML = '';
+            processedQuiz.forEach((_, idx) => {
+                const item = document.createElement('div');
+                item.classList.add('grid-item');
+                item.id = `grid-item-${idx}`;
+                item.innerText = idx + 1;
+                item.onclick = () => {
+                    tryNavigation(idx);
+                };
+                grid.appendChild(item);
+            });
+            updateSidebarStatus();
+        }
+
+        // Hàm kiểm tra logic điều hướng trước khi chuyển câu hỏi lớn hơn
+        function tryNavigation(targetIdx) {
+            if (targetIdx < 0 || targetIdx >= processedQuiz.length) return;
+
+            // Nếu muốn chuyển tới câu lớn hơn câu hiện tại mà câu hiện tại CHƯA ĐƯỢC CHỌN ĐÁP ÁN
+            if (targetIdx > currentIndex && processedQuiz[currentIndex].userSelectedIndex === null) {
+                pendingTargetIndex = targetIdx;
+                openWarningModal();
+            } else {
+                // Đi lùi hoặc câu hiện tại đã làm rồi thì chuyển đi bình thường
+                currentIndex = targetIdx;
+                renderQuestion();
+            }
+        }
+
+        function openWarningModal() {
+            document.getElementById('warning-modal').classList.add('show');
+        }
+
+        function closeWarningModal() {
+            document.getElementById('warning-modal').classList.remove('show');
+            pendingTargetIndex = null;
+        }
+
+        // Khi bấm "Chuyển tiếp" ở Modal nhắc nhở -> Gán màu vàng cho ô tiến trình
+        function confirmSkipQuestion() {
+            processedQuiz[currentIndex].isSkipped = true; 
+            currentIndex = pendingTargetIndex;
+            closeWarningModal();
+            renderQuestion();
+        }
+
+        function updateSidebarStatus() {
+            let answeredCount = 0;
+            let skippedCount = 0;
+
+            processedQuiz.forEach((q, idx) => {
+                const item = document.getElementById(`grid-item-${idx}`);
+                if(!item) return;
+
+                item.classList.remove('active', 'correct', 'wrong', 'skipped');
+
+                if (idx === currentIndex) item.classList.add('active');
+
+                if (q.userSelectedIndex !== null) {
+                    answeredCount++;
+                    if(q.isUserCorrect) item.classList.add('correct'); 
+                    else item.classList.add('wrong');
+                } else if (q.isSkipped) {
+                    skippedCount++;
+                    item.classList.add('skipped'); // Gán màu vàng CSS
+                }
+            });
+
+            // Tiến trình = Số câu đã tương tác (Đã chọn hoặc đã nhấn bỏ qua qua Modal)
+            const totalProcessed = answeredCount + skippedCount;
+            document.getElementById('progress-text').innerText = `${totalProcessed}/${processedQuiz.length}`;
+            const percentage = (totalProcessed / processedQuiz.length) * 100;
+            document.getElementById('progress-fill').style.width = `${percentage}%`;
+
+            // Khi toàn bộ 56 câu đều được xử lý (trả lời hoặc chủ động bỏ qua) thì tự xuất bảng điểm nhỏ
+            if (totalProcessed === processedQuiz.length) {
+                setTimeout(showResultSummary, 600);
+            }
+        }
+
+        function renderQuestion() {
+            const area = document.getElementById('quiz-area');
+            const currentQ = processedQuiz[currentIndex];
+            
+            let optionsHTML = '';
+            currentQ.options.forEach((opt, i) => {
+                let stateClass = '';
+                
+                if(currentQ.userSelectedIndex !== null) {
+                    stateClass = 'disabled ';
+                    if(opt.isCorrect) {
+                        stateClass += 'correct-instant';
+                    } else if(currentQ.userSelectedIndex === i) {
+                        stateClass += 'wrong-instant';
+                    }
+                }
+
+                optionsHTML += `
+                    <div class="option-item ${stateClass}" onclick="handleOptionClick(${i})">
+                        <div class="option-prefix">${String.fromCharCode(65 + i)}</div>
+                        <div>${opt.text}</div>
+                    </div>
+                `;
+            });
+
+            area.innerHTML = `
+                <div class="q-header">Câu hỏi ${currentIndex + 1}: ${currentQ.questionText}</div>
+                <div class="options-list">${optionsHTML}</div>
+                <div class="actions">
+                    <button class="btn btn-secondary" onclick="tryNavigation(currentIndex - 1)" ${currentIndex === 0 ? 'disabled' : ''}>Câu trước</button>
+                    <button class="btn btn-primary" onclick="tryNavigation(currentIndex + 1)" ${currentIndex === processedQuiz.length - 1 ? 'disabled' : ''}>Câu tiếp theo</button>
+                </div>
+            `;
+            
+            updateSidebarStatus();
+        }
+
+        function handleOptionClick(optionIdx) {
+            const currentQ = processedQuiz[currentIndex];
+            if(currentQ.userSelectedIndex !== null) return;
+
+            currentQ.userSelectedIndex = optionIdx;
+            currentQ.isUserCorrect = currentQ.options[optionIdx].isCorrect;
+            currentQ.isSkipped = false; // Nếu quay lại chọn đáp án thì xóa trạng thái bỏ qua màu vàng đi
+
+            renderQuestion();
+        }
+
+        function showResultSummary() {
+            let correct = 0;
+            let wrong = 0;
+            let skipped = 0;
+            const tableBody = document.getElementById('summary-table-body');
+            tableBody.innerHTML = '';
+
+            processedQuiz.forEach((q, idx) => {
+                let statusBadge = '';
+                if (q.userSelectedIndex !== null) {
+                    if (q.isUserCorrect) {
+                        correct++;
+                        statusBadge = '<span class="badge badge-success">Đúng</span>';
+                    } else {
+                        wrong++;
+                        statusBadge = '<span class="badge badge-danger">Sai</span>';
+                    }
+                } else {
+                    skipped++;
+                    statusBadge = '<span class="badge badge-warning">Bỏ qua</span>';
+                }
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td style="text-align: center; font-weight:600;">${idx + 1}</td>
+                    <td style="max-width: 380px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${q.questionText}</td>
+                    <td style="text-align: center;">${statusBadge}</td>
+                `;
+                row.style.cursor = 'pointer';
+                row.onclick = () => {
+                    currentIndex = idx;
+                    renderQuestion();
+                    closeResultModal();
+                };
+                tableBody.appendChild(row);
+            });
+
+            document.getElementById('modal-correct-count').innerText = correct;
+            document.getElementById('modal-wrong-count').innerText = wrong;
+            document.getElementById('modal-skip-count').innerText = skipped;
+            document.getElementById('modal-ratio').innerText = Math.round((correct / processedQuiz.length) * 100) + '%';
+
+            document.getElementById('result-modal').classList.add('show');
+        }
+
+        function closeResultModal() {
+            document.getElementById('result-modal').classList.remove('show');
+        }
+
+        function resetQuiz() {
+            if(confirm("Bạn có chắc chắn muốn làm lại? Đề thi và thứ tự các đáp án sẽ được xáo trộn ngẫu nhiên một lần nữa.")) {
+                initQuiz();
+            }
+        }
+
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>

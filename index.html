@@ -29,10 +29,10 @@
             font-size: 15px; 
         }
 
-        /* Khi ở trên MÁY TÍNH (Desktop), tự động phóng to toàn bộ font-size gốc lên ~150% */
+        /* Khi ở trên MÁY TÍNH (Desktop), tự động phóng to toàn bộ giao diện lên ~150% */
         @media (min-width: 901px) {
             :root {
-                font-size: 22px; /* Kích thước chữ và các thành phần tăng 1.5 lần */
+                font-size: 22px; 
             }
         }
 
@@ -77,20 +77,21 @@
             margin: 1.5rem auto;
             padding: 0 1rem;
             display: grid;
-            grid-template-columns: 1fr 380px; /* Tăng độ rộng sidebar trên máy tính */
+            grid-template-columns: 1fr 380px;
             gap: 1.5rem;
         }
 
-        /* Cấu hình giao diện trên ĐIỆN THOẠI */
+        /* TỐI ƯU GIAO DIỆN TRÊN ĐIỆN THOẠI */
         @media (max-width: 900px) {
             .container { 
                 grid-template-columns: 1fr; /* Chuyển thành 1 cột dọc */
                 margin: 0.8rem auto;
-                gap: 1rem;
+                gap: 1.5rem;
             }
             .sidebar { 
-                order: -1; /* Đẩy thanh tiến độ lên trên câu hỏi cho dễ nhìn */
+                /* Đã loại bỏ order: -1 để nội dung câu hỏi (.main-content) tự động lên đầu tiên */
                 position: static !important;
+                margin-top: 0.5rem;
             }
             header h1 {
                 font-size: 1.4rem;
@@ -136,7 +137,6 @@
 
         .grid-nav {
             display: grid;
-            /* Tự động tính toán số cột để vừa màn hình điện thoại, không cố định 5 cột nữa */
             grid-template-columns: repeat(auto-fill, minmax(55px, 1fr));
             gap: 8px;
             max-height: 300px;
@@ -284,7 +284,7 @@
         .btn-primary:hover { background: var(--primary-hover); }
         .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        /* Modal Overlay */
+        /* Modal Cơ Bản */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -306,8 +306,7 @@
             background: white;
             border-radius: var(--radius);
             width: 100%;
-            max-width: 700px;
-            max-height: 85vh;
+            max-width: 550px;
             display: flex;
             flex-direction: column;
             box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
@@ -320,7 +319,7 @@
         }
 
         .modal-header {
-            padding: 1rem;
+            padding: 1.2rem;
             border-bottom: 1px solid var(--border);
             text-align: center;
         }
@@ -331,71 +330,33 @@
         }
 
         .modal-body {
-            padding: 1rem;
+            padding: 1.5rem;
             overflow-y: auto;
-            flex: 1;
         }
 
         .score-summary {
             display: flex;
             justify-content: space-around;
-            margin-bottom: 1rem;
             background: var(--bg-body);
-            padding: 0.8rem;
+            padding: 1.2rem 0.8rem;
             border-radius: 8px;
             text-align: center;
         }
 
         .score-num {
-            font-size: 1.4rem;
+            font-size: 1.6rem;
             font-weight: 700;
+            margin-bottom: 4px;
         }
-
-        .table-wrapper {
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            font-size: 0.85rem;
-        }
-
-        th {
-            background: var(--bg-body);
-            padding: 10px;
-            font-weight: 600;
-        }
-
-        td {
-            padding: 10px;
-            border-top: 1px solid var(--border);
-        }
-
-        .badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: white;
-            display: inline-block;
-        }
-
-        .badge-success { background: var(--success); }
-        .badge-danger { background: var(--danger); }
-        .badge-warning { background: var(--warning); color: var(--warning-text); }
 
         .modal-footer {
-            padding: 1rem;
+            padding: 1.2rem;
             border-top: 1px solid var(--border);
             display: flex;
             justify-content: center;
         }
 
-        /* Banner cảnh báo màu vàng ở giữa màn hình */
+        /* Banner cảnh báo màu vàng */
         .warning-banner {
             background-color: var(--warning-light);
             border-top: 6px solid var(--warning);
@@ -462,34 +423,20 @@
                 <div class="score-summary">
                     <div>
                         <div class="score-num" style="color: var(--success);" id="modal-correct-count">0</div>
-                        <div style="font-size: 0.8rem; color: var(--text-muted);">Đúng</div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Đúng</div>
                     </div>
                     <div>
                         <div class="score-num" style="color: var(--danger);" id="modal-wrong-count">0</div>
-                        <div style="font-size: 0.8rem; color: var(--text-muted);">Sai</div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Sai</div>
                     </div>
                     <div>
                         <div class="score-num" style="color: var(--warning-text);" id="modal-skip-count">0</div>
-                        <div style="font-size: 0.8rem; color: var(--text-muted);">Bỏ qua</div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Bỏ qua</div>
                     </div>
                     <div>
                         <div class="score-num" style="color: var(--primary);" id="modal-ratio">0%</div>
-                        <div style="font-size: 0.8rem; color: var(--text-muted);">Tỷ lệ đúng</div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Tỷ lệ đúng</div>
                     </div>
-                </div>
-                
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="text-align: center; width: 70px;">Câu</th>
-                                <th>Nội dung câu hỏi</th>
-                                <th style="text-align: center; width: 95px;">Kết quả</th>
-                            </tr>
-                        </thead>
-                        <tbody id="summary-table-body">
-                            </tbody>
-                    </table>
                 </div>
             </div>
             <div class="modal-footer">
@@ -708,7 +655,7 @@
             
             updateSidebarStatus();
             
-            // Tự động cuộn mượt lên đầu nội dung câu hỏi (tiện lợi trên điện thoại)
+            // Tự động cuốn lên đầu nội dung câu hỏi một cách nhẹ nhàng trên điện thoại
             if (window.innerWidth <= 900) {
                 document.getElementById('quiz-area').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
@@ -725,41 +672,19 @@
             renderQuestion();
         }
 
+        // HÀM HIỂN THỊ KẾT QUẢ ĐÃ ĐƯỢC RÚT GỌN SẠCH SẼ THEO YÊU CẦU
         function showResultSummary() {
             let correct = 0;
             let wrong = 0;
             let skipped = 0;
-            const tableBody = document.getElementById('summary-table-body');
-            tableBody.innerHTML = '';
 
-            processedQuiz.forEach((q, idx) => {
-                let statusBadge = '';
+            processedQuiz.forEach((q) => {
                 if (q.userSelectedIndex !== null) {
-                    if (q.isUserCorrect) {
-                        correct++;
-                        statusBadge = '<span class="badge badge-success">Đúng</span>';
-                    } else {
-                        wrong++;
-                        statusBadge = '<span class="badge badge-danger">Sai</span>';
-                    }
+                    if (q.isUserCorrect) correct++;
+                    else wrong++;
                 } else {
                     skipped++;
-                    statusBadge = '<span class="badge badge-warning">Bỏ qua</span>';
                 }
-
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td style="text-align: center; font-weight:600;">${idx + 1}</td>
-                    <td style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${q.questionText}</td>
-                    <td style="text-align: center;">${statusBadge}</td>
-                `;
-                row.style.cursor = 'pointer';
-                row.onclick = () => {
-                    currentIndex = idx;
-                    renderQuestion();
-                    closeResultModal();
-                };
-                tableBody.appendChild(row);
             });
 
             document.getElementById('modal-correct-count').innerText = correct;

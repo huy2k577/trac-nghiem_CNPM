@@ -24,6 +24,16 @@
             --border: #e5e7eb;
             --radius: 12px;
             --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            
+            /* Mặc định cấu hình cỡ chữ gốc cho DI ĐỘNG */
+            font-size: 15px; 
+        }
+
+        /* Khi ở trên MÁY TÍNH (Desktop), tự động phóng to toàn bộ font-size gốc lên ~150% */
+        @media (min-width: 901px) {
+            :root {
+                font-size: 22px; /* Kích thước chữ và các thành phần tăng 1.5 lần */
+            }
         }
 
         * {
@@ -43,7 +53,7 @@
         header {
             background: linear-gradient(135deg, #1e3a8a, #2563eb);
             color: white;
-            padding: 24px;
+            padding: 1.5rem;
             text-align: center;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
             position: sticky;
@@ -52,52 +62,67 @@
         }
 
         header h1 {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: 700;
             margin-bottom: 6px;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 30px auto;
-            padding: 0 16px;
-            display: grid;
-            grid-template-columns: 1fr 320px;
-            gap: 24px;
+        header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
         }
 
+        .container {
+            max-width: 1400px;
+            margin: 1.5rem auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: 1fr 380px; /* Tăng độ rộng sidebar trên máy tính */
+            gap: 1.5rem;
+        }
+
+        /* Cấu hình giao diện trên ĐIỆN THOẠI */
         @media (max-width: 900px) {
-            .container { grid-template-columns: 1fr; }
-            .sidebar { order: -1; }
+            .container { 
+                grid-template-columns: 1fr; /* Chuyển thành 1 cột dọc */
+                margin: 0.8rem auto;
+                gap: 1rem;
+            }
+            .sidebar { 
+                order: -1; /* Đẩy thanh tiến độ lên trên câu hỏi cho dễ nhìn */
+                position: static !important;
+            }
+            header h1 {
+                font-size: 1.4rem;
+            }
         }
 
         .main-content {
             background: var(--bg-card);
             border-radius: var(--radius);
-            padding: 30px;
+            padding: 1.8rem;
             box-shadow: var(--shadow);
-            min-height: 400px;
-            position: relative;
+            min-height: 350px;
         }
 
         .sidebar {
             background: var(--bg-card);
             border-radius: var(--radius);
-            padding: 20px;
+            padding: 1.2rem;
             box-shadow: var(--shadow);
             height: fit-content;
             position: sticky;
-            top: 130px;
+            top: 120px;
         }
 
         .progress-container {
-            margin-bottom: 16px;
+            margin-bottom: 1rem;
         }
 
         .progress-bar-bg {
             background: var(--border);
-            height: 8px;
-            border-radius: 4px;
+            height: 10px;
+            border-radius: 5px;
             overflow: hidden;
             margin-top: 6px;
         }
@@ -111,9 +136,10 @@
 
         .grid-nav {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            /* Tự động tính toán số cột để vừa màn hình điện thoại, không cố định 5 cột nữa */
+            grid-template-columns: repeat(auto-fill, minmax(55px, 1fr));
             gap: 8px;
-            max-height: 320px;
+            max-height: 300px;
             overflow-y: auto;
             padding-right: 4px;
         }
@@ -126,15 +152,16 @@
             background: var(--bg-body);
             border: 1px solid var(--border);
             border-radius: 8px;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .grid-item.active {
             border-color: var(--primary);
-            box-shadow: 0 0 0 2px var(--primary-light);
+            box-shadow: 0 0 0 3px var(--primary-light);
         }
 
         .grid-item.correct {
@@ -156,9 +183,9 @@
         }
 
         .q-header {
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             font-weight: 600;
-            margin-bottom: 24px;
+            margin-bottom: 1.5rem;
         }
 
         .options-list {
@@ -170,12 +197,14 @@
         .option-item {
             display: flex;
             align-items: center;
-            padding: 14px 18px;
+            padding: 0.9rem 1.2rem;
             border: 2px solid var(--border);
             border-radius: var(--radius);
             cursor: pointer;
             transition: all 0.15s ease;
             font-weight: 500;
+            font-size: 0.95rem;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .option-item:not(.disabled):hover {
@@ -203,13 +232,14 @@
             font-weight: 700;
             margin-right: 12px;
             background: var(--bg-body);
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .option-item.correct-instant .option-prefix {
@@ -223,20 +253,21 @@
         }
 
         .actions {
-            margin-top: 30px;
+            margin-top: 1.8rem;
             display: flex;
             justify-content: space-between;
             gap: 12px;
         }
 
         .btn {
-            padding: 12px 24px;
+            padding: 0.7rem 1.4rem;
             border: none;
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .btn-secondary {
@@ -253,7 +284,7 @@
         .btn-primary:hover { background: var(--primary-hover); }
         .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        /* Modal Cơ Bản */
+        /* Modal Overlay */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -264,6 +295,7 @@
             z-index: 1000;
             opacity: 0; pointer-events: none;
             transition: opacity 0.3s ease;
+            padding: 12px;
         }
 
         .modal-overlay.show {
@@ -273,8 +305,8 @@
         .modal-card {
             background: white;
             border-radius: var(--radius);
-            width: 90%;
-            max-width: 650px;
+            width: 100%;
+            max-width: 700px;
             max-height: 85vh;
             display: flex;
             flex-direction: column;
@@ -283,23 +315,23 @@
         }
 
         @keyframes slideUp {
-            from { transform: translateY(30px); opacity: 0; }
+            from { transform: translateY(20px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
 
         .modal-header {
-            padding: 20px;
+            padding: 1rem;
             border-bottom: 1px solid var(--border);
             text-align: center;
         }
 
         .modal-header h2 {
             color: var(--primary);
-            font-size: 1.5rem;
+            font-size: 1.3rem;
         }
 
         .modal-body {
-            padding: 20px;
+            padding: 1rem;
             overflow-y: auto;
             flex: 1;
         }
@@ -307,15 +339,15 @@
         .score-summary {
             display: flex;
             justify-content: space-around;
-            margin-bottom: 20px;
+            margin-bottom: 1rem;
             background: var(--bg-body);
-            padding: 15px;
+            padding: 0.8rem;
             border-radius: 8px;
             text-align: center;
         }
 
         .score-num {
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             font-weight: 700;
         }
 
@@ -329,26 +361,27 @@
             width: 100%;
             border-collapse: collapse;
             text-align: left;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
         }
 
         th {
             background: var(--bg-body);
-            padding: 12px;
+            padding: 10px;
             font-weight: 600;
         }
 
         td {
-            padding: 12px;
+            padding: 10px;
             border-top: 1px solid var(--border);
         }
 
         .badge {
             padding: 4px 8px;
             border-radius: 4px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 700;
             color: white;
+            display: inline-block;
         }
 
         .badge-success { background: var(--success); }
@@ -356,17 +389,17 @@
         .badge-warning { background: var(--warning); color: var(--warning-text); }
 
         .modal-footer {
-            padding: 15px;
+            padding: 1rem;
             border-top: 1px solid var(--border);
             display: flex;
             justify-content: center;
         }
 
-        /* Thống nhất CSS cho Modal Nhắc nhở màu vàng */
+        /* Banner cảnh báo màu vàng ở giữa màn hình */
         .warning-banner {
             background-color: var(--warning-light);
             border-top: 6px solid var(--warning);
-            max-width: 420px !important;
+            max-width: 450px !important;
         }
         .btn-warning-action {
             background: var(--warning);
@@ -381,7 +414,7 @@
 
     <header>
         <h1>HỆ THỐNG LUYỆN THI CÔNG NGHỆ PHẦN MỀM</h1>
-        <p>Tính năng: Kiểm tra đáp án tức thì & Xáo trộn hoàn toàn đề thi (STU)</p>
+        <p>Giao diện siêu lớn cho Máy tính & Tương thích mượt mà trên Điện thoại</p>
     </header>
 
     <div class="container">
@@ -392,8 +425,8 @@
 
         <div class="sidebar">
             <div class="progress-container">
-                <div style="display: flex; justify-content: space-between; font-weight: 600;">
-                    <span>Tiến độ:</span>
+                <div style="display: flex; justify-content: space-between; font-weight: 600; font-size: 0.9rem;">
+                    <span>Tiến độ luyện đề:</span>
                     <span id="progress-text">0/56</span>
                 </div>
                 <div class="progress-bar-bg">
@@ -408,10 +441,10 @@
 
     <div class="modal-overlay" id="warning-modal">
         <div class="modal-card warning-banner">
-            <div class="modal-body" style="text-align: center; padding: 30px 20px;">
-                <div style="font-size: 3rem; margin-bottom: 10px;">⚠️</div>
-                <h3 style="font-size: 1.3rem; margin-bottom: 12px; color: var(--warning-text); font-weight: 700;">Chưa chọn đáp án!</h3>
-                <p style="color: #6b7280; margin-bottom: 24px; font-size: 0.95rem;">Bạn chưa thực hiện chọn đáp án cho câu hỏi này. Bạn muốn ở lại hoàn thành hay tiếp tục chuyển đi?</p>
+            <div class="modal-body" style="text-align: center; padding: 1.5rem 1rem;">
+                <div style="font-size: 2.5rem; margin-bottom: 8px;">⚠️</div>
+                <h3 style="font-size: 1.2rem; margin-bottom: 10px; color: var(--warning-text); font-weight: 700;">Chưa chọn đáp án!</h3>
+                <p style="color: #6b7280; margin-bottom: 20px; font-size: 0.9rem;">Bạn chưa chọn câu trả lời này. Bạn muốn ở lại chọn đáp án hay bỏ qua để đi tiếp?</p>
                 <div style="display: flex; gap: 12px; justify-content: center;">
                     <button class="btn btn-secondary" onclick="closeWarningModal()">Ở lại</button>
                     <button class="btn btn-warning-action" onclick="confirmSkipQuestion()">Chuyển tiếp</button>
@@ -423,25 +456,25 @@
     <div class="modal-overlay" id="result-modal">
         <div class="modal-card">
             <div class="modal-header">
-                <h2>KẾT QUẢ KIỂM TRA TỔNG HỢP</h2>
+                <h2>BẢNG ĐÁNH GIÁ KẾT QUẢ</h2>
             </div>
             <div class="modal-body">
                 <div class="score-summary">
                     <div>
                         <div class="score-num" style="color: var(--success);" id="modal-correct-count">0</div>
-                        <div style="font-size: 0.85rem; color: var(--text-muted);">Đúng</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">Đúng</div>
                     </div>
                     <div>
                         <div class="score-num" style="color: var(--danger);" id="modal-wrong-count">0</div>
-                        <div style="font-size: 0.85rem; color: var(--text-muted);">Sai</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">Sai</div>
                     </div>
                     <div>
                         <div class="score-num" style="color: var(--warning-text);" id="modal-skip-count">0</div>
-                        <div style="font-size: 0.85rem; color: var(--text-muted);">Bỏ qua</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">Bỏ qua</div>
                     </div>
                     <div>
                         <div class="score-num" style="color: var(--primary);" id="modal-ratio">0%</div>
-                        <div style="font-size: 0.85rem; color: var(--text-muted);">Tỷ lệ đúng</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">Tỷ lệ đúng</div>
                     </div>
                 </div>
                 
@@ -449,9 +482,9 @@
                     <table>
                         <thead>
                             <tr>
-                                <th style="text-align: center; width: 90px;">Câu số</th>
-                                <th>Nội dung câu hỏi ôn tập</th>
-                                <th style="text-align: center; width: 110px;">Trạng thái</th>
+                                <th style="text-align: center; width: 70px;">Câu</th>
+                                <th>Nội dung câu hỏi</th>
+                                <th style="text-align: center; width: 95px;">Kết quả</th>
                             </tr>
                         </thead>
                         <tbody id="summary-table-body">
@@ -460,7 +493,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" onclick="resetQuiz(); closeResultModal();">Xáo trộn đề làm lại</button>
+                <button class="btn btn-primary" onclick="resetQuiz(); closeResultModal();">Xáo trộn đề & Làm lại</button>
             </div>
         </div>
     </div>
@@ -527,7 +560,7 @@
 
         let processedQuiz = [];
         let currentIndex = 0;
-        let pendingTargetIndex = null; // Biến tạm lưu câu muốn tới khi bị chặn cảnh báo
+        let pendingTargetIndex = null;
 
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
@@ -550,7 +583,7 @@
                     options: formattedOptions,
                     userSelectedIndex: null,
                     isUserCorrect: null,
-                    isSkipped: false // Trạng thái người dùng cố tình bỏ qua (Màu vàng)
+                    isSkipped: false
                 };
             });
             shuffleArray(processedQuiz);
@@ -579,16 +612,13 @@
             updateSidebarStatus();
         }
 
-        // Hàm kiểm tra logic điều hướng trước khi chuyển câu hỏi lớn hơn
         function tryNavigation(targetIdx) {
             if (targetIdx < 0 || targetIdx >= processedQuiz.length) return;
 
-            // Nếu muốn chuyển tới câu lớn hơn câu hiện tại mà câu hiện tại CHƯA ĐƯỢC CHỌN ĐÁP ÁN
             if (targetIdx > currentIndex && processedQuiz[currentIndex].userSelectedIndex === null) {
                 pendingTargetIndex = targetIdx;
                 openWarningModal();
             } else {
-                // Đi lùi hoặc câu hiện tại đã làm rồi thì chuyển đi bình thường
                 currentIndex = targetIdx;
                 renderQuestion();
             }
@@ -603,7 +633,6 @@
             pendingTargetIndex = null;
         }
 
-        // Khi bấm "Chuyển tiếp" ở Modal nhắc nhở -> Gán màu vàng cho ô tiến trình
         function confirmSkipQuestion() {
             processedQuiz[currentIndex].isSkipped = true; 
             currentIndex = pendingTargetIndex;
@@ -629,17 +658,15 @@
                     else item.classList.add('wrong');
                 } else if (q.isSkipped) {
                     skippedCount++;
-                    item.classList.add('skipped'); // Gán màu vàng CSS
+                    item.classList.add('skipped');
                 }
             });
 
-            // Tiến trình = Số câu đã tương tác (Đã chọn hoặc đã nhấn bỏ qua qua Modal)
             const totalProcessed = answeredCount + skippedCount;
             document.getElementById('progress-text').innerText = `${totalProcessed}/${processedQuiz.length}`;
             const percentage = (totalProcessed / processedQuiz.length) * 100;
             document.getElementById('progress-fill').style.width = `${percentage}%`;
 
-            // Khi toàn bộ 56 câu đều được xử lý (trả lời hoặc chủ động bỏ qua) thì tự xuất bảng điểm nhỏ
             if (totalProcessed === processedQuiz.length) {
                 setTimeout(showResultSummary, 600);
             }
@@ -665,7 +692,7 @@
                 optionsHTML += `
                     <div class="option-item ${stateClass}" onclick="handleOptionClick(${i})">
                         <div class="option-prefix">${String.fromCharCode(65 + i)}</div>
-                        <div>${opt.text}</div>
+                        <div style="flex: 1;">${opt.text}</div>
                     </div>
                 `;
             });
@@ -680,6 +707,11 @@
             `;
             
             updateSidebarStatus();
+            
+            // Tự động cuộn mượt lên đầu nội dung câu hỏi (tiện lợi trên điện thoại)
+            if (window.innerWidth <= 900) {
+                document.getElementById('quiz-area').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
         }
 
         function handleOptionClick(optionIdx) {
@@ -688,7 +720,7 @@
 
             currentQ.userSelectedIndex = optionIdx;
             currentQ.isUserCorrect = currentQ.options[optionIdx].isCorrect;
-            currentQ.isSkipped = false; // Nếu quay lại chọn đáp án thì xóa trạng thái bỏ qua màu vàng đi
+            currentQ.isSkipped = false;
 
             renderQuestion();
         }
@@ -718,7 +750,7 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td style="text-align: center; font-weight:600;">${idx + 1}</td>
-                    <td style="max-width: 380px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${q.questionText}</td>
+                    <td style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${q.questionText}</td>
                     <td style="text-align: center;">${statusBadge}</td>
                 `;
                 row.style.cursor = 'pointer';
